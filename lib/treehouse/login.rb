@@ -1,7 +1,7 @@
 module Treehouse
   class Login
     def self.dummy
-      new(123, "bob@example.com")
+      new(123, "user@example.com")
     end
 
     attr_reader :id, :email

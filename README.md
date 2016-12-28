@@ -37,7 +37,7 @@ session = request.env[:treehouse] #=> #<Treehouse::Session:0x007f8610411a48>
 session.logged_in? #=> true
 login = session.current_login #=> #<Treehouse::Login:0x007f860efc3208>
 login.id #=> 123
-login.email #=> "bob@example.com"
+login.email #=> "user@example.com"
 ```
 
 ## Dummy mode
@@ -49,7 +49,7 @@ Treehouse.configure do |config|
   config.dummy = true
 end
 
-request.env[:treehouse].current_login #=> #<Treehouse::Login:0x007f860efc3208 @id=123, @email="bob@example.com">
+request.env[:treehouse].current_login #=> #<Treehouse::Login:0x007f860efc3208 @id=123, @email="user@example.com">
 ```
 
 It can be helpful to enable dummy mode in development:
