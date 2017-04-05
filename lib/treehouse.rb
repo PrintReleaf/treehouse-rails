@@ -22,23 +22,12 @@ module Treehouse
     configuration.key or raise "Treehouse key not configured"
   end
 
-  def self.site
-    configuration.site or raise "Treehouse site not configured"
-  end
-
   def self.url
     configuration.url or raise "Treehouse URL not configured"
   end
 
-  def self.login_url(options={})
-    # This is a shim to support the old syntax of pasing in options
-    # like Treehouse.login_url(return_to: "/whatever").
-    # We should remove it when we remove treehouse-rails's concept of "site".
-    if options.is_a? Hash
-      "#{url}/login?site=#{site}#{options[:return_to]}"
-    elsif options.is_a? String
-      "#{url}/login?site=#{options}"
-    end
+  def self.login_url(site)
+    "#{url}/login?site=#{site}"
   end
 end
 

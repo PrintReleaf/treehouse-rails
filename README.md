@@ -24,7 +24,6 @@ Treehouse.configure do |config|
   config.url    = "http://yourtreehouse.com"
   config.key    = "your-treehouse-key"
   config.cookie = "_treehouse_session"
-  config.site   = "http://mysite.com"
 end
 ```
 

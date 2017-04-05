@@ -51,18 +51,6 @@ describe Treehouse, ".key" do
   end
 end
 
-describe Treehouse, ".site" do
-  it "returns its site when it is configured" do
-    Treehouse.configure(site: "http://trousers.com")
-    expect(Treehouse.site).to eq "http://trousers.com"
-  end
-
-  it "raises when the site is nil" do
-    Treehouse.configure(site: nil)
-    expect { Treehouse.site }.to raise_exception /not configured/i
-  end
-end
-
 describe Treehouse, ".url" do
   it "returns its url when it is configured" do
     Treehouse.configure(url: "http://pants.com")
@@ -76,23 +64,9 @@ describe Treehouse, ".url" do
 end
 
 describe Treehouse, ".login_url" do
-  it "returns the login url for the site" do
-    Treehouse.configure(url: "http://pants.com", site: "http://trousers.com")
-    expect(Treehouse.login_url).to eq "http://pants.com/login?site=http://trousers.com"
-  end
-
-  context "when an options hash is provided" do
-    it "appends the return_to path if it is provided" do
-      Treehouse.configure(url: "http://pants.com", site: "http://trousers.com")
-      expect(Treehouse.login_url(return_to: '/shorts')).to eq "http://pants.com/login?site=http://trousers.com/shorts"
-    end
-  end
-
-  context "when a URL string is provided" do
-    it "returns a login url with the URL string as the site parameter" do
-      Treehouse.configure(url: "http://pants.com", site: "http://trousers.com")
-      expect(Treehouse.login_url("http://britches.com/shorts")).to eq "http://pants.com/login?site=http://britches.com/shorts"
-    end
+  it "returns a login url with the `site` parameter" do
+    Treehouse.configure(url: "http://pants.com")
+    expect(Treehouse.login_url("http://trousers.com/shorts")).to eq "http://pants.com/login?site=http://trousers.com/shorts"
   end
 end
 
