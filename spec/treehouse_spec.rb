@@ -81,9 +81,18 @@ describe Treehouse, ".login_url" do
     expect(Treehouse.login_url).to eq "http://pants.com/login?site=http://trousers.com"
   end
 
-  it "appends the return_to path if it is provided" do
-    Treehouse.configure(url: "http://pants.com", site: "http://trousers.com")
-    expect(Treehouse.login_url(return_to: '/shorts')).to eq "http://pants.com/login?site=http://trousers.com/shorts"
+  context "when an options hash is provided" do
+    it "appends the return_to path if it is provided" do
+      Treehouse.configure(url: "http://pants.com", site: "http://trousers.com")
+      expect(Treehouse.login_url(return_to: '/shorts')).to eq "http://pants.com/login?site=http://trousers.com/shorts"
+    end
+  end
+
+  context "when a URL string is provided" do
+    it "returns a login url with the URL string as the site parameter" do
+      Treehouse.configure(url: "http://pants.com", site: "http://trousers.com")
+      expect(Treehouse.login_url("http://britches.com/shorts")).to eq "http://pants.com/login?site=http://britches.com/shorts"
+    end
   end
 end
 
