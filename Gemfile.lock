@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    treehouse-rails (0.0.4)
+    treehouse-rails (0.0.5)
       rails (>= 4.2.4)
 
 GEM
