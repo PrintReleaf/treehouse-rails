@@ -76,51 +76,45 @@ end
 describe Treehouse::Session, "#cookie" do
   let(:env) { double }
   let(:session) { Treehouse::Session.new(env) }
-  let(:cookies) {{ "_pants_cookie_key" => "pants_encrypted_cookie" }}
+  let(:cookie_jar) {{ "_pants_cookie_key" => "pants_encrypted_cookie" }}
+  let(:encrypted_cookie) { "pants_encrypted_cookie" }
+  let(:decrypted_cookie) {{ "treehouse_login_id" => "pants_id", "treehouse_login_email" => "pants_email" }}
   let(:key_generator) { double }
+  let(:encryptor) { double }
 
   before do
-    allow(session).to receive(:cookies).and_return(cookies)
+    allow(session).to receive(:cookie_jar).and_return(cookie_jar)
     allow(Treehouse).to receive(:key).and_return("pants_secret_key")
     allow(Treehouse).to receive(:cookie).and_return("_pants_cookie_key")
     allow(ActiveSupport::KeyGenerator).to receive(:new).with("pants_secret_key", iterations: 1000).and_return(key_generator)
+    allow(key_generator).to receive(:generate_key).with('encrypted cookie').and_return("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+    allow(key_generator).to receive(:generate_key).with('signed encrypted cookie').and_return("signed secret")
+    allow(ActiveSupport::MessageEncryptor).to receive(:new).with("abcdefghijklmnopqrstuvwxyzABCDEF", "signed secret", serializer: JSON).and_return(encryptor)
   end
 
   context "when the cookie exists" do
     it "returns the cookie hash" do
-      cookie_jar = {
-        "_pants_cookie_key" => {
-          "treehouse_login_id" => "pants_id",
-          "treehouse_login_email" => "pants_email"
-        }
-      }
+      allow(encryptor).to receive(:decrypt_and_verify).with(encrypted_cookie).and_return(decrypted_cookie)
+      expect(session.cookie).to eq(decrypted_cookie)
+    end
+  end
 
-      allow(ActionDispatch::Cookies::EncryptedCookieJar).to receive(:new).with(
-        { "_pants_cookie_key" => "pants_encrypted_cookie" },
-        key_generator,
-        { encrypted_cookie_salt: 'encrypted cookie', encrypted_signed_cookie_salt: 'signed encrypted cookie', serializer: :json }
-      ).and_return(cookie_jar)
-
-      expect(session.cookie).to eq({ "treehouse_login_id" => "pants_id", "treehouse_login_email" => "pants_email" })
+  context "when the cookie jar is empty" do
+    it "returns an empty hash" do
+      allow(session).to receive(:cookie_jar).and_return({})
+      expect(session.cookie).to eq({})
     end
   end
 
   context "when the cookie does not exist" do
     it "returns an empty hash" do
-      cookie_jar = {}
-
-      allow(ActionDispatch::Cookies::EncryptedCookieJar).to receive(:new).with(
-        { "_pants_cookie_key" => "pants_encrypted_cookie" },
-        key_generator,
-        { encrypted_cookie_salt: 'encrypted cookie', encrypted_signed_cookie_salt: 'signed encrypted cookie', serializer: :json }
-      ).and_return(cookie_jar)
-
+      allow(encryptor).to receive(:decrypt_and_verify).with(encrypted_cookie).and_return({})
       expect(session.cookie).to eq({})
     end
   end
 end
 
-describe Treehouse::Session, "#cookies" do
+describe Treehouse::Session, "#cookie_jar" do
   let(:env) { double }
   let(:session) { Treehouse::Session.new(env) }
 
@@ -128,7 +122,7 @@ describe Treehouse::Session, "#cookies" do
     cookie_jar = double
     request = double(cookie_jar: cookie_jar)
     allow(ActionDispatch::Request).to receive(:new).with(env).and_return(request)
-    expect(session.cookies).to eq cookie_jar
+    expect(session.cookie_jar).to eq cookie_jar
   end
 end
 
