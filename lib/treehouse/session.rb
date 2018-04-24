@@ -43,12 +43,12 @@ module Treehouse
       cookie_value = cookie_jar[cookie_key]
       return {} if cookie_value.blank?
       cookie_value = CGI::unescape(cookie_value)
-      salt = 'encrypted cookie'
-      signed_salt = 'signed encrypted cookie'
+      salt         = 'encrypted cookie'
+      signed_salt  = 'signed encrypted cookie'
       key_generator = ActiveSupport::KeyGenerator.new(secret_key, iterations: 1000)
-      secret = key_generator.generate_key(salt)[0, 32]
+      secret = key_generator.generate_key(salt)[0, ActiveSupport::MessageEncryptor.key_len]
       signed_secret = key_generator.generate_key(signed_salt)
-      encryptor = ActiveSupport::MessageEncryptor.new(secret, signed_secret, serializer: JSON)
+      encryptor = ActiveSupport::MessageEncryptor.new(secret, signed_secret, cipher: "aes-256-cbc", serializer: ActiveSupport::MessageEncryptor::NullSerializer)
       return encryptor.decrypt_and_verify(cookie_value) || {}
     end
   end
