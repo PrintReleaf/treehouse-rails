@@ -89,7 +89,7 @@ describe Treehouse::Session, "#cookie" do
     allow(ActiveSupport::KeyGenerator).to receive(:new).with("pants_secret_key", iterations: 1000).and_return(key_generator)
     allow(key_generator).to receive(:generate_key).with('encrypted cookie').and_return("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
     allow(key_generator).to receive(:generate_key).with('signed encrypted cookie').and_return("signed secret")
-    allow(ActiveSupport::MessageEncryptor).to receive(:new).with("abcdefghijklmnopqrstuvwxyzABCDEF", "signed secret", cipher: "aes-256-cbc", serializer: ActiveSupport::MessageEncryptor::NullSerializer).and_return(encryptor)
+    allow(ActiveSupport::MessageEncryptor).to receive(:new).with("abcdefghijklmnopqrstuvwxyzABCDEF", "signed secret", cipher: "aes-256-cbc", serializer: JSON).and_return(encryptor)
   end
 
   context "when the cookie exists" do

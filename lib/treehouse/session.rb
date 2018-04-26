@@ -48,7 +48,7 @@ module Treehouse
       key_generator = ActiveSupport::KeyGenerator.new(secret_key, iterations: 1000)
       secret = key_generator.generate_key(salt)[0, ActiveSupport::MessageEncryptor.key_len]
       signed_secret = key_generator.generate_key(signed_salt)
-      encryptor = ActiveSupport::MessageEncryptor.new(secret, signed_secret, cipher: "aes-256-cbc", serializer: ActiveSupport::MessageEncryptor::NullSerializer)
+      encryptor = ActiveSupport::MessageEncryptor.new(secret, signed_secret, cipher: "aes-256-cbc", serializer: JSON)
       return encryptor.decrypt_and_verify(cookie_value) || {}
     end
   end
